@@ -1,0 +1,9 @@
+    
+SELECT CONCAT('T',LPAD(REPLACE(teacher.id,',',''), 11, 0)) as ID,teacher.nickname as Nickname, trn_status.name as Status, x.roles as Role 
+FROM trn_teacher as teacher 
+left join trn_teacher_role as role on teacher.id = role.teacher_id
+LEFT JOIN (SELECT role.id,
+                  GROUP_CONCAT(role.name) AS roles
+             FROM trn_role role
+GROUP BY role.id) as x on x.id=role.id 
+left join trn_status on trn_status.id = teacher.status;

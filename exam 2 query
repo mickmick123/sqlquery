@@ -1,0 +1,10 @@
+
+SELECT REPLACE(teacher.id,',','') as ID,teacher.nickname as Nickname, trn_time.open as Open, trn_reserved.reserved as Reserved, trn_taught.taught as Taught, trn_noshow.noshow as NoShow
+FROM trn_teacher as teacher
+left join trn_teacher_role as role on teacher.id = role.teacher_id 
+left join trn_role on trn_role.id=role.id 
+left join trn_status on trn_status.id = teacher.status
+left outer join (SELECT teacher_id, count(*) as open FROM trn_time_table where status = 1 GROUP BY teacher_id) trn_time ON teacher.id = trn_time.teacher_id
+left outer join (SELECT teacher_id, count(*) as reserved FROM trn_time_table where status = 3 GROUP BY teacher_id) trn_reserved ON teacher.id = trn_reserved.teacher_id
+left outer join (SELECT teacher_id, count(*) as taught FROM trn_evaluation where result = 1 GROUP BY teacher_id) trn_taught ON teacher.id = trn_taught.teacher_id
+left outer join (SELECT teacher_id, count(*) as noshow FROM trn_evaluation where result = 2 GROUP BY teacher_id) trn_noshow ON teacher.id = trn_noshow.teacher_id where (teacher.status=1 or teacher.status=2) and (role.id=1 and role.id=2);
